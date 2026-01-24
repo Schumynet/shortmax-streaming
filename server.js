@@ -46,9 +46,11 @@ app.use('/api', async (req, res) => {
 })
 
 // Video proxy
-app.use('/video', async (req, res) => {
-  const videoUrl = req.path.slice(1) // remove leading /
-  const fullUrl = `https://${videoUrl}${req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : ''}`
+app.get('/video', async (req, res) => {
+  const videoUrl = req.query.url
+  if (!videoUrl) return res.status(400).send('Missing url')
+  
+  const fullUrl = `https://${videoUrl}`
   
   try {
     const response = await axios.get(fullUrl, { responseType: 'stream' })

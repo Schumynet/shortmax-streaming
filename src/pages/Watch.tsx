@@ -23,7 +23,7 @@ const Watch = () => {
 
     const video = videoRef.current;
     const originalUrl = videoData.video.video_720;
-    const videoUrl = `/video/${originalUrl.replace('https://', '')}`;
+    const videoUrl = `/video?url=${encodeURIComponent(originalUrl.replace('https://', ''))}`;
 
     // Cleanup previous HLS instance
     if (hlsRef.current) {
