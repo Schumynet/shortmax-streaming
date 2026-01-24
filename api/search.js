@@ -10,8 +10,11 @@ export default async function handler(req, res) {
   if (!q) return res.status(400).json({ error: 'Missing query' });
   
   try {
-    const response = await fetch(`${API_URL}/search/${encodeURIComponent(q)}/${page}?lang=${lang}&pageSize=20`, {
-      headers: { Authorization: `Bearer ${TOKEN}`, 'User-Agent': 'ShortMax-App/1.0' }
+    const response = await fetch(`${API_URL}/search?q=${encodeURIComponent(q)}&lang=${lang}&page=${page}`, {
+      headers: { 
+        Authorization: `Bearer ${TOKEN}`,
+        'User-Agent': 'ShortMax-App/1.0'
+      }
     });
     res.json(await response.json());
   } catch (err) {
