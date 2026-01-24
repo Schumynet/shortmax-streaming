@@ -11,7 +11,10 @@ export default async function handler(req, res) {
   try {
     const url = `${API_URL}/foryou?page=${page}&lang=${lang}`;
     const response = await fetch(url, {
-      headers: { Authorization: `Bearer ${TOKEN}` }
+      headers: { 
+        Authorization: `Bearer ${TOKEN}`,
+        'User-Agent': 'ShortMax-App/1.0'
+      }
     });
     
     if (!response.ok) {

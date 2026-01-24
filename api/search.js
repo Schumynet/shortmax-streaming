@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   
   try {
     const response = await fetch(`${API_URL}/search/${encodeURIComponent(q)}/${page}?lang=${lang}&pageSize=20`, {
-      headers: { Authorization: `Bearer ${TOKEN}` }
+      headers: { Authorization: `Bearer ${TOKEN}`, 'User-Agent': 'ShortMax-App/1.0' }
     });
     res.json(await response.json());
   } catch (err) {
