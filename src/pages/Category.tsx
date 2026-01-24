@@ -27,7 +27,7 @@ const Category = () => {
     const fetchVip = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/feed/vip?lang=${lang}`);
+        const response = await fetch(`/api/feed?type=vip&lang=${lang}`);
         const data = await response.json();
         const items = data.data || [];
         // Handle both flat array and nested format

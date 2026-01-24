@@ -87,7 +87,7 @@ export const useDramaDetail = (code: string | undefined) => {
 
     const fetchDetail = async () => {
       try {
-        const response = await fetch(`/api/detail/${code}?lang=${lang}`);
+        const response = await fetch(`/api/detail?code=${code}&lang=${lang}`);
         const data = await response.json();
         setDrama(data.data);
       } catch (error) {
@@ -114,7 +114,7 @@ export const useVideoPlayer = (code: string | undefined, episode: number) => {
     const fetchVideo = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/play/${code}?ep=${episode}&lang=${lang}`);
+        const response = await fetch(`/api/play?code=${code}&ep=${episode}&lang=${lang}`);
         const data = await response.json();
         setVideoData(data.data);
       } catch (error) {
@@ -138,7 +138,7 @@ export const useVipDramas = () => {
   useEffect(() => {
     const fetchVip = async () => {
       try {
-        const response = await fetch(`/api/feed/vip?lang=${lang}`);
+        const response = await fetch(`/api/feed?type=vip&lang=${lang}`);
         const data = await response.json();
         const items = data.data || [];
         if (items[0]?.items) {
@@ -166,7 +166,7 @@ export const useRomanceDramas = () => {
   useEffect(() => {
     const fetchRomance = async () => {
       try {
-        const response = await fetch(`/api/feed/romance?lang=${lang}`);
+        const response = await fetch(`/api/feed?type=romance&lang=${lang}`);
         const data = await response.json();
         setDramas(data.data || []);
       } catch (error) {

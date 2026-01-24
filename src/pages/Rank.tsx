@@ -28,7 +28,7 @@ const Rank = () => {
     const fetchRanked = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/feed/ranked?lang=${lang}`);
+        const response = await fetch(`/api/feed?type=ranked&lang=${lang}`);
         const data = await response.json();
         setSections(data.data || []);
       } catch (error) {
