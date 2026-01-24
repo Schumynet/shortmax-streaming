@@ -1,12 +1,28 @@
 import { Link } from 'react-router-dom';
 import { Play } from 'lucide-react';
-import { useDramas, useHomeDramas } from '../hooks/useDramas';
+import { useEffect, useRef } from 'react';
+import { useDramas, useRomanceDramas } from '../hooks/useDramas';
 
 const Home = () => {
-  const { dramas: featured, loading: featuredLoading } = useDramas();
-  const { dramas: home, loading: homeLoading } = useHomeDramas(1);
+  const { dramas: featured, loading: featuredLoading, hasMore, loadMore } = useDramas();
+  const { dramas: romance, loading: romanceLoading } = useRomanceDramas();
+  const loaderRef = useRef<HTMLDivElement>(null);
 
-  if (featuredLoading) {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loaderRef.current) observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [hasMore, loadMore]);
+
+  if (featuredLoading && featured.length === 0) {
     return (
       <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
         <div className="animate-spin w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full"></div>
@@ -48,12 +64,12 @@ const Home = () => {
           </Link>
         )}
 
-        {/* For You Section */}
-        {featured.length > 1 && (
+        {/* Romance Content */}
+        {!romanceLoading && romance.length > 0 && (
           <div>
-            <h2 className="text-lg font-semibold mb-4">For You</h2>
+            <h2 className="text-lg font-semibold mb-4">Romance</h2>
             <div className="grid grid-cols-3 gap-3">
-              {featured.slice(1, 7).map((drama) => (
+              {romance.slice(0, 6).map((drama) => (
                 <Link key={drama.id} to={`/watch/${drama.code}`} className="block">
                   <div className="relative aspect-[2/3] rounded-lg overflow-hidden">
                     <img 
@@ -72,12 +88,12 @@ const Home = () => {
           </div>
         )}
 
-        {/* Home Content */}
-        {!homeLoading && home.length > 0 && (
+        {/* For You Section */}
+        {featured.length > 1 && (
           <div>
-            <h2 className="text-lg font-semibold mb-4">Trending Now</h2>
+            <h2 className="text-lg font-semibold mb-4">For You</h2>
             <div className="grid grid-cols-3 gap-3">
-              {home.map((drama) => (
+              {featured.slice(1).map((drama) => (
                 <Link key={drama.id} to={`/watch/${drama.code}`} className="block">
                   <div className="relative aspect-[2/3] rounded-lg overflow-hidden">
                     <img 
@@ -92,6 +108,13 @@ const Home = () => {
                   <p className="text-xs text-zinc-400">{drama.episodes} episodes</p>
                 </Link>
               ))}
+            </div>
+            
+            {/* Infinite scroll loader */}
+            <div ref={loaderRef} className="flex justify-center py-4">
+              {featuredLoading && (
+                <div className="animate-spin w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full"></div>
+              )}
             </div>
           </div>
         )}

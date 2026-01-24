@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/video", "destination": "/api/video" },
-    { "source": "/api/:path*", "destination": "/api/proxy" }
+    { "source": "/api/:path*", "destination": "/api/proxy" },
+    { "source": "/((?!api|video).*)", "destination": "/index.html" }
   ]
 }

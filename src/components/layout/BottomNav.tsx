@@ -1,11 +1,11 @@
-import { Home, TrendingUp, Search, Grid } from 'lucide-react'
+import { Home, TrendingUp, Search, Crown } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 
 const navItems = [
   { to: '/', icon: Home, label: 'Home' },
   { to: '/rank', icon: TrendingUp, label: 'Rank' },
   { to: '/search', icon: Search, label: 'Search' },
-  { to: '/category', icon: Grid, label: 'Category' },
+  { to: '/category', icon: Crown, label: 'VIP' },
 ]
 
 export default function BottomNav() {

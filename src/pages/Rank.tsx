@@ -20,6 +20,7 @@ interface RankSection {
 
 const Rank = () => {
   const [sections, setSections] = useState<RankSection[]>([]);
+  const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(true);
   const { lang } = useLanguage();
 
@@ -47,6 +48,8 @@ const Rank = () => {
     );
   }
 
+  const currentSection = sections[activeTab];
+
   return (
     <div className="space-y-6 pt-2">
       <div className="flex items-center gap-2">
@@ -54,37 +57,52 @@ const Rank = () => {
         <h1 className="text-xl font-bold">Ranking</h1>
       </div>
 
-      {sections.map((section, sectionIndex) => (
-        <div key={sectionIndex} className="space-y-3">
-          <h2 className="font-semibold text-lg">{section.title}</h2>
-          <div className="space-y-3">
-            {section.items.map((drama, index) => (
-              <Link key={drama.code} to={`/watch/${drama.code}`} className="block">
-                <div className="card p-3 hover:bg-zinc-800 transition-colors">
-                  <div className="flex gap-3">
-                    <div className="relative flex-shrink-0">
-                      <div className="w-14 h-20 rounded-lg overflow-hidden bg-zinc-900">
-                        <img src={drama.cover} alt={drama.name} className="w-full h-full object-cover" />
-                      </div>
-                      <div className="absolute -top-1 -left-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
-                        {index + 1}
-                      </div>
+      {/* Tabs */}
+      <div className="flex gap-2 overflow-x-auto">
+        {sections.map((section, index) => (
+          <button
+            key={index}
+            onClick={() => setActiveTab(index)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+              activeTab === index
+                ? 'bg-red-500 text-white'
+                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+            }`}
+          >
+            {section.title}
+          </button>
+        ))}
+      </div>
+
+      {/* Drama List */}
+      {currentSection && (
+        <div className="space-y-3">
+          {currentSection.items.map((drama, index) => (
+            <Link key={drama.code} to={`/watch/${drama.code}`} className="block">
+              <div className="card p-3 hover:bg-zinc-800 transition-colors">
+                <div className="flex gap-3">
+                  <div className="relative flex-shrink-0">
+                    <div className="w-14 h-20 rounded-lg overflow-hidden bg-zinc-900">
+                      <img src={drama.cover} alt={drama.name} className="w-full h-full object-cover" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-sm mb-1 line-clamp-2">{drama.name}</h3>
-                      {drama.summary && <p className="text-xs text-muted mb-2 line-clamp-2">{drama.summary}</p>}
-                      <div className="flex items-center gap-3 text-xs text-muted">
-                        {drama.hotScore && <span>🔥 {drama.hotScore}</span>}
-                        <span>{drama.episodes} ep</span>
-                      </div>
+                    <div className="absolute -top-1 -left-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg">
+                      {index + 1}
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-sm mb-1 line-clamp-2">{drama.name}</h3>
+                    {drama.summary && <p className="text-xs text-muted mb-2 line-clamp-2">{drama.summary}</p>}
+                    <div className="flex items-center gap-3 text-xs text-muted">
+                      {drama.hotScore && <span>🔥 {drama.hotScore}</span>}
+                      <span>{drama.episodes} ep</span>
                     </div>
                   </div>
                 </div>
-              </Link>
-            ))}
-          </div>
+              </div>
+            </Link>
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 };

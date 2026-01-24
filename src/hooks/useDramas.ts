@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '../store/language';
 
 export interface Drama {
@@ -13,25 +13,43 @@ export interface Drama {
 export const useDramas = () => {
   const [dramas, setDramas] = useState<Drama[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const { lang } = useLanguage();
 
   useEffect(() => {
-    const fetchDramas = async () => {
-      try {
-        const response = await fetch(`/api/foryou?page=1&lang=${lang}`);
-        const data = await response.json();
-        setDramas(data.data || []);
-      } catch (error) {
-        console.error('Error fetching dramas:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDramas();
+    setDramas([]);
+    setPage(1);
+    setHasMore(true);
+    setLoading(true);
+    
+    fetch(`/api/foryou?page=1&lang=${lang}`)
+      .then(res => res.json())
+      .then(data => {
+        const list = data.data || [];
+        setDramas(list);
+        setHasMore(list.length >= 20);
+        setPage(2);
+      })
+      .finally(() => setLoading(false));
   }, [lang]);
 
-  return { dramas, loading };
+  const loadMore = useCallback(() => {
+    if (loading || !hasMore) return;
+    setLoading(true);
+    
+    fetch(`/api/foryou?page=${page}&lang=${lang}`)
+      .then(res => res.json())
+      .then(data => {
+        const list = data.data || [];
+        setDramas(prev => [...prev, ...list]);
+        setHasMore(list.length >= 20);
+        setPage(p => p + 1);
+      })
+      .finally(() => setLoading(false));
+  }, [page, lang, loading, hasMore]);
+
+  return { dramas, loading, hasMore, loadMore };
 };
 
 export const useHomeDramas = (tab: number = 1) => {
@@ -110,4 +128,55 @@ export const useVideoPlayer = (code: string | undefined, episode: number) => {
   }, [code, episode, lang]);
 
   return { videoData, loading };
+};
+
+export const useVipDramas = () => {
+  const [dramas, setDramas] = useState<Drama[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { lang } = useLanguage();
+
+  useEffect(() => {
+    const fetchVip = async () => {
+      try {
+        const response = await fetch(`/api/feed/vip?lang=${lang}`);
+        const data = await response.json();
+        const items = data.data || [];
+        if (items[0]?.items) {
+          setDramas(items.flatMap((s: any) => s.items));
+        } else {
+          setDramas(items);
+        }
+      } catch (error) {
+        console.error('Error fetching VIP dramas:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchVip();
+  }, [lang]);
+
+  return { dramas, loading };
+};
+
+export const useRomanceDramas = () => {
+  const [dramas, setDramas] = useState<Drama[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { lang } = useLanguage();
+
+  useEffect(() => {
+    const fetchRomance = async () => {
+      try {
+        const response = await fetch(`/api/feed/romance?lang=${lang}`);
+        const data = await response.json();
+        setDramas(data.data || []);
+      } catch (error) {
+        console.error('Error fetching romance dramas:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRomance();
+  }, [lang]);
+
+  return { dramas, loading };
 };

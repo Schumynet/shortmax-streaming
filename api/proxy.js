@@ -1,19 +1,14 @@
-import axios from 'axios';
-
-const API_URL = process.env.API_URL || 'https://captain.sapimu.au/dramabox/api/v1';
+const API_URL = process.env.API_URL || 'https://captain.sapimu.au/shortmax/api/v1';
 const TOKEN = process.env.AUTH_TOKEN;
 
 const ALLOWED_PATHS = ['/languages', '/foryou', '/home', '/detail/', '/play/', '/search', '/feed/'];
 
 export default async function handler(req, res) {
-  // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
 
   const path = req.url.replace('/api', '');
   const [pathname, queryString] = path.split('?');
@@ -23,48 +18,27 @@ export default async function handler(req, res) {
   }
 
   if (!TOKEN) {
-    return res.status(500).json({ 
-      error: 'Server configuration error',
-      message: 'AUTH_TOKEN not configured. Please set environment variables in Vercel.'
-    });
+    return res.status(500).json({ error: 'AUTH_TOKEN not configured' });
   }
 
   try {
     const url = `${API_URL}${pathname}${queryString ? '?' + queryString : ''}`;
     
-    console.log('Proxying request:', {
-      url,
-      pathname,
-      queryString,
-      hasToken: !!TOKEN
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${TOKEN}` }
     });
-    
-    const response = await axios.get(url, {
-      headers: { 
-        Authorization: `Bearer ${TOKEN}`,
-        'User-Agent': 'DramaBox-Proxy/1.0'
-      }
-    });
+    const data = await response.json();
     
     // Protect play endpoint for episodes >= 30
     if (pathname.startsWith('/play/')) {
-      const queryParams = new URLSearchParams(queryString);
-      const episode = parseInt(queryParams.get('ep') || '0');
-      
-      if (episode >= 30) {
-        return res.status(403).json({ 
-          success: false, 
-          error: 'Episode locked',
-          message: 'For full API access, check Telegram @sapitokenbot'
-        });
+      const params = new URLSearchParams(queryString);
+      if (parseInt(params.get('ep') || '0') >= 30) {
+        return res.status(403).json({ error: 'Episode locked' });
       }
     }
     
-    res.json(response.data);
+    res.json(data);
   } catch (err) {
-    res.status(err.response?.status || 500).json({ 
-      error: 'For full API access, check Telegram @sapitokenbot',
-      details: err.message
-    });
+    res.status(500).json({ error: err.message });
   }
 }

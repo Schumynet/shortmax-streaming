@@ -21,10 +21,6 @@ export const useLanguage = create<LanguageState>()(
 export const languages = [
   { code: 'id', name: 'Indonesian', flag: '🇮🇩' },
   { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'zh', name: 'Traditional Chinese', flag: '🇹🇼' },
-  { code: 'zh_cn', name: 'Simplified Chinese', flag: '🇨🇳' },
-  { code: 'fil', name: 'Filipino', flag: '🇵🇭' },
-  { code: 'hi', name: 'Hindi', flag: '🇮🇳' },
   { code: 'ja', name: 'Japanese', flag: '🇯🇵' },
   { code: 'ko', name: 'Korean', flag: '🇰🇷' },
   { code: 'th', name: 'Thai', flag: '🇹🇭' },
@@ -34,8 +30,6 @@ export const languages = [
   { code: 'vi', name: 'Vietnamese', flag: '🇻🇳' },
   { code: 'de', name: 'German', flag: '🇩🇪' },
   { code: 'fr', name: 'French', flag: '🇫🇷' },
-  { code: 'ms', name: 'Malay', flag: '🇲🇾' },
-  { code: 'ru', name: 'Russian', flag: '🇷🇺' },
   { code: 'it', name: 'Italian', flag: '🇮🇹' },
   { code: 'tr', name: 'Turkish', flag: '🇹🇷' },
 ];
