@@ -53,6 +53,24 @@ app.get('/video', async (req, res) => {
   const fullUrl = `https://${videoUrl}`
   
   try {
+    // If m3u8, rewrite URLs
+    if (videoUrl.includes('.m3u8')) {
+      const response = await axios.get(fullUrl)
+      let text = response.data
+      const baseUrl = videoUrl.substring(0, videoUrl.lastIndexOf('/') + 1)
+      
+      text = text.replace(/^(?!#)(.+\.ts.*)$/gm, (match) => {
+        if (match.startsWith('http')) {
+          return `/video?url=${encodeURIComponent(match.replace('https://', ''))}`
+        }
+        return `/video?url=${encodeURIComponent(baseUrl + match)}`
+      })
+      
+      res.set('Content-Type', 'application/vnd.apple.mpegurl')
+      res.set('Access-Control-Allow-Origin', '*')
+      return res.send(text)
+    }
+    
     const response = await axios.get(fullUrl, { responseType: 'stream' })
     res.set('Content-Type', response.headers['content-type'])
     res.set('Access-Control-Allow-Origin', '*')
