@@ -9,7 +9,7 @@ const app = express()
 const API_URL = process.env.API_URL || 'https://captain.sapimu.au/shortmax/api/v1'
 const TOKEN = process.env.AUTH_TOKEN
 
-const ALLOWED_PATHS = ['/languages', '/foryou', '/home', '/detail/', '/play/', '/search']
+const ALLOWED_PATHS = ['/languages', '/foryou', '/home', '/detail/', '/play/', '/search', '/feed/']
 
 app.use('/api', async (req, res) => {
   const path = req.path
