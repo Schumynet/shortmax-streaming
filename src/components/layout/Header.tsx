@@ -13,7 +13,7 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 h-16 bg-zinc-950/95 backdrop-blur-md border-b border-zinc-800 z-50">
       <div className="flex items-center justify-between h-full px-4 max-w-md mx-auto">
         <Link to="/" className="text-xl font-bold text-white">
-          DramaBox
+          ShortMax
         </Link>
         
         <div className="flex items-center gap-3">
